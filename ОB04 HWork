@@ -1,0 +1,92 @@
+from abc import ABC, abstractmethod
+import random
+
+# Шаг 1: Создаем абстрактный класс для оружия. Наследуем его от абстракции ABC. Т.е он ничем не заполнен
+class Weapon(ABC):
+    # указываем декоратор
+    @abstractmethod
+    # абстрактная функция
+    def attack(self):
+        # здесь нет реализации, указываем pass
+        pass
+
+# Шаг 2: 1-ый класс оружия, с мечом, наследует класс Weapon.Реализация конкретных типов оружия
+class Sword(Weapon):
+    # реализуем метод attack
+    def attack(self):
+        return "Боец наносит удар мечом."
+
+# Шаг 2: 2-ый класс, с луком, наследует класс Weapon.Реализация конкретных типов оружия
+class Bow(Weapon):
+    def attack(self):
+        return "Боец стреляет из лука."
+
+# Шаг 3: Создаем конкретный класс бойца Fighter. Он ни от чего не наследуется.
+class Fighter:
+    # конструктор класса
+    def __init__(self, name):
+        self.name = name
+        self.weapon = None
+        # либо self.weapon = weapon  если у бойца сразу есть оружие
+
+    def change_weapon(self, weapon: Weapon):
+        self.weapon = weapon
+        print(f"{self.name} выбирает {weapon.__class__.__name__.lower()}.")
+
+    def attack(self):
+        # вызываем функцию attack
+        if self.weapon:
+            return self.weapon.attack()
+        else:
+            return f"{self.name} не имеет оружия!"
+
+    def fight(self):
+        self.weapon.attack()
+
+# Класс Monster
+class Monster:
+    def __init__(self, name, health):
+        self.name = name
+        self.health = health
+
+    def is_alive(self):
+        return self.health > 0
+
+    def take_damage(self, damage):
+        self.health -= damage
+        if self.health <= 0:
+            print(f"{self.name} побежден!")
+
+
+# Шаг 4: Реализация боя
+# функция `battle` реализует цикл боя, где боец атакует монстра, нанося ему случайный урон, и проверяет, жив ли монстр после каждого удара
+ #эта функция принимает два параметра: fighter и monster. Оба параметра имеют указание на тип данных — Fighter и Monster
+def battle(fighter: Fighter, monster: Monster):
+    print(f"Бой начинается! {fighter.name} против {monster.name}!")
+    while monster.is_alive():
+        # Атака бойца
+        print(fighter.attack())
+        damage = random.randint(5, 15)  # Случайный урон
+        monster.take_damage(damage)
+        if not monster.is_alive():
+            break
+        print(f"{monster.name} еще жив, его здоровье: {monster.health}\n")
+
+# Главная программа
+if __name__ == "__main__":
+
+    fighter = Fighter("Герой")
+    monster = Monster("Дракон", 30)
+
+    # Бой с мечом
+    fighter.change_weapon(Sword())
+    battle(fighter, monster)
+
+    # Проверка, что монстр может быть снова выбран
+    monster.health = 30  # Восстановим здоровье монстра для следующего боя
+
+    print("\n--- Команда меняет оружие ---\n")
+
+    # Бой с луком
+    fighter.change_weapon(Bow())
+    battle(fighter, monster)
