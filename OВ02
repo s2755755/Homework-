@@ -1,0 +1,54 @@
+class User:
+        #Инициализация пользователя с уникальным ID и именем
+    def __init__(self, user_id, name):
+        # Защищённый атрибут для ID пользователя
+        self.__user_id = user_id
+        # Защищённый атрибут для имени пользователя
+        self.__name = name
+        # Уровень доступа по умолчанию
+        self.__access_level = 'user'
+        # Метод получения уникального ID пользователя.
+    def get_user_id(self):
+        return self.__user_id
+        # Метод получения имени пользователя
+    def get_name(self):
+        return self.__name
+        # Метод получения уровня доступа пользователя
+    def get_access_level(self):
+        return self.__access_level
+
+       # Класс для представления администратора, наследуется от класса User
+class Admin(User):
+        # Инициализация администратора
+    def __init__(self, user_id, name):
+        # Вызов конструктора родительского класса
+        super().__init__(user_id, name)
+        self.__access_level = 'admin'
+
+    def add_user(self, user_list, user_id, name):
+        new_user = User(user_id, name)
+        user_list.append(new_user)
+
+    def remove_user(self, user_list, user_id):
+        user_list[:] = [user for user in user_list if user.get_user_id() != user_id]
+
+
+# Пример использования
+
+if __name__ == "__main__":
+    users = []
+
+    admin = Admin(1, "Admin User")
+    print(f"Admin created: {admin.get_name()} with access level: {admin.get_access_level()}")
+
+    admin.add_user(users, 2, "Петр Петров")
+    admin.add_user(users, 3, "Николай Романов")
+
+    print("Users list:")
+    for user in users:
+        print(f"ID: {user.get_user_id()}, Name: {user.get_name()}, Access Level: {user.get_access_level()}")
+
+    admin.remove_user(users, 2)
+    print("Users list after removal:")
+    for user in users:
+        print(f"ID: {user.get_user_id()}, Name: {user.get_name()}, Access Level: {user.get_access_level()}")
